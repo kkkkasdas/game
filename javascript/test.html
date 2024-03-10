@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Notepad</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: auto; padding: 20px; }
+        textarea { width: 100%; margin-bottom: 10px; }
+        button { margin-right: 10px; }
+        .memo { background: #f0f0f0; border: 1px solid #ddd; margin-top: 10px; padding: 10px; }
+        .memo button { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <textarea id="newMemo" rows="4" placeholder="Write a new memo..."></textarea>
+        <button onclick="addMemo()">Add Memo</button>
+        <div id="memoList"></div>
+    </div>
+
+    <script>
+        const memoList = document.getElementById('memoList');
+        let memos = JSON.parse(localStorage.getItem('memos')) || [];
+
+        function addMemo() {
+            const memoText = document.getElementById('newMemo').value;
+            if(memoText.trim()) {
+                memos.push(memoText);
+                updateLocalStorage();
+                document.getElementById('newMemo').value = ''; // Clear textarea
+                renderMemos();
+            }
+        }
+
+        function deleteMemo(index) {
+            memos.splice(index, 1);
+            updateLocalStorage();
+            renderMemos();
+        }
+
+        function renderMemos() {
+            memoList.innerHTML = '';
+            memos.forEach((memo, index) => {
+                const memoElement = document.createElement('div');
+                memoElement.classList.add('memo');
+                memoElement.innerHTML = `
+                    <p>${memo}</p>
+                    <button onclick="deleteMemo(${index})">Delete</button>
+                `;
+                memoList.appendChild(memoElement);
+            });
+        }
+
+        function updateLocalStorage() {
+            localStorage.setItem('memos', JSON.stringify(memos));
+        }
+
+        renderMemos();
+    </script>
+</body>
+</html>
